@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Login – 1028 Café Management System</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./../css/login.css">
+</head>
+<body>
+  <main class="card">
+    <div class="logo-section">
+      <div class="logo">
+        <i class="fas fa-coffee"></i>
+      </div>
+      <h1>1028 Café</h1>
+      <p class="subtitle">Management System</p>
+    </div>
+
+    <div class="login-section">
+      <h2>Welcome Back</h2>
+      <p class="login-subtitle">Sign in to your admin account</p>
+
+      <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+      <form method="post" action="../login.php">
+        <div class="field">
+          <label for="username">
+            <i class="fas fa-user"></i>
+            Username
+          </label>
+          <input id="username" name="username" type="text" placeholder="Enter your username" required autocomplete="username" />
+        </div>
+
+        <div class="field">
+          <label for="password">
+            <i class="fas fa-lock"></i>
+            Password
+          </label>
+          <div class="toggle-wrap">
+            <input id="password" name="password" type="password" placeholder="Enter your password" required autocomplete="current-password" />
+            <button type="button" class="toggle-show" id="showBtn" aria-label="Toggle password visibility">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="remember">
+            <input type="checkbox" name="remember" id="remember" /> 
+            <span class="checkmark"></span>
+            Remember me
+          </label>
+          <a class="link" href="./forgot_password.html">Forgot password?</a>
+        </div>
+
+        <button class="btn" type="submit" name="login">
+          Sign In
+        </button>
+      </form>
+
+      <div class="footer-text">
+        <p>© 2024 1028 Café. All rights reserved.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Password visibility toggle only
+    const pwd = document.getElementById('password');
+    const btn = document.getElementById('showBtn');
+    const icon = btn.querySelector('i');
+
+    btn.addEventListener('click', () => {
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        pwd.type = 'password';
+        icon.className = 'fa-solid fa-eye';
+      }
+    });
+
+    // Show error messages from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const success = urlParams.get('success');
+    
+    if (success === 'password_reset') {
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.style.backgroundColor = '#10b981';
+      errorMessage.style.borderColor = '#059669';
+      errorMessage.textContent = 'Password reset successful! Please login with your new password.';
+      errorMessage.style.display = 'block';
+    } else if (error) {
+      const errorMessage = document.getElementById('errorMessage');
+      let message = 'An error occurred. Please try again.';
+      
+      if (error === 'invalid_credentials') {
+        message = 'Invalid username or password. Please try again.';
+      } else if (error === 'empty_fields') {
+        message = 'Please fill in all required fields.';
+      }
+      
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

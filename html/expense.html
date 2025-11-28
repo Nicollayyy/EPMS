@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>1028 Tea & Café — Expenses</title>
+
+  <!-- Bootstrap & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="dash-body">
+
+  <!-- Include Topbar -->
+  <?php include 'topbar.php'; ?>
+
+  <div class="app-shell d-flex">
+
+    <!-- Include Sidebar -->
+    <?php include 'sidebar.php'; ?>
+
+    <!-- Main Content -->
+    <main class="content p-4">
+
+      <!-- Stats Row -->
+      <div class="row g-3">
+        <div class="col-12 col-xl-8">
+          <div class="card-hero p-3 mb-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h2 class="mb-1">Hello, <span id="greetName">Ash</span> 👋</h2>
+                <p class="text-muted mb-0">Here's a summary of your expenses.</p>
+              </div>
+              <div class="text-end">
+                <small class="text-muted">Updated: <span id="updatedAt">—</span></small>
+              </div>
+            </div>
+
+            <div class="row gx-3 gy-3 mt-3">
+              <div class="col-6 col-md-4">
+                <div class="stat-card p-3">
+                  <div class="stat-label">Total Expenses Today</div>
+                  <div class="stat-value" id="todayExpense">₱ 0</div>
+                  <div class="stat-meta text-danger"><i class="fa-solid fa-arrow-down"></i> 0.0%</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-4">
+                <div class="stat-card p-3">
+                  <div class="stat-label">This Month Expenses</div>
+                  <div class="stat-value" id="monthExpense">₱ 0</div>
+                  <div class="stat-meta text-danger"><i class="fa-solid fa-arrow-down"></i> 0.0%</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-4">
+                <div class="stat-card p-3">
+                  <div class="stat-label">Expense Categories</div>
+                  <div class="stat-value" id="expenseCategories">0</div>
+                  <div class="stat-meta text-muted">active</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expense Table -->
+          <div class="panel p-3">
+            <div class="panel-head d-flex justify-content-between align-items-center mb-2">
+              <strong>Expense List</strong>
+              <a href="expense_add.php" class="small text-decoration-none">Add Expense</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-dark table-striped align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="expenseTable">
+                  <tr>
+                    <td colspan="6" class="text-center">No expenses recorded yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Expense Chart -->
+          <div class="panel p-3 mt-3">
+            <div class="panel-head d-flex justify-content-between align-items-center mb-2">
+              <strong>Expenses by Category</strong>
+              <small class="text-muted">Current Month</small>
+            </div>
+            <canvas id="expenseChart" height="160"></canvas>
+          </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-12 col-xl-4">
+          <div class="panel p-3 mb-3">
+            <div class="panel-head d-flex justify-content-between align-items-center mb-2">
+              <strong>Quick Actions</strong>
+            </div>
+            <div class="d-grid gap-2">
+              <a href="expense_add.php" class="btn btn-gold"><i class="fa-solid fa-plus me-2"></i>Add Expense</a>
+              <a href="expense_list.php" class="btn btn-outline-light"><i class="fa-solid fa-list me-2"></i>Expense List</a>
+            </div>
+          </div>
+
+          <div class="panel p-3">
+            <div class="panel-head d-flex justify-content-between align-items-center mb-2">
+              <strong>System Info</strong>
+            </div>
+            <div class="small text-muted">
+              <div>Version: <strong>v1.0</strong></div>
+              <div>Server: <strong>Localhost</strong></div>
+              <div>Last Sync: <strong id="lastSync">—</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="mt-4 text-center text-muted small">
+        © 1028 Tea & Café — Expense & Profit Management
+      </footer>
+    </main>
+
+  </div>
+
+  <!-- Bootstrap bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Page JS -->
+  <script>
+    // Sidebar toggle
+    const btnToggle = document.getElementById('btnToggle');
+    const sidebar = document.getElementById('sidebar');
+    btnToggle?.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+
+    // Profile dropdown
+    const profileToggle = document.getElementById('profileToggle');
+    const profileMenu = document.getElementById('profileMenu');
+    profileToggle?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileMenu.classList.toggle('show');
+    });
+    document.addEventListener('click', () => profileMenu.classList.remove('show'));
+
+    // Sample expense chart (replace with dynamic fetch)
+    const ctx = document.getElementById('expenseChart');
+    const expenseChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Milk Tea','Cheesecake','Frappe','Fruit Tea','Coffee','Soda','Hot Drinks','Premium Frappe'],
+        datasets: [{
+          data: [1200, 800, 500, 400, 300, 200, 100, 50],
+          backgroundColor: ['#8b6449','#c99b6b','#f2d9b3','#e6e1d6','#b3551a','#d9b382','#302014','#ffd700']
+        }]
+      },
+      options: { responsive:true, plugins:{ legend:{ position:'bottom' } } }
+    });
+
+    // Demo filler
+    document.getElementById('updatedAt').textContent = new Date().toLocaleString();
+    document.getElementById('lastSync').textContent = new Date().toLocaleString();
+  </script>
+</body>
+</html>

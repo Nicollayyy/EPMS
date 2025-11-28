@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>1028 Tea & Café — Dashboard</title>
+
+  <!-- Bootstrap & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="dash-body">
+
+  <!-- Topbar -->
+  <header class="topbar d-flex align-items-center justify-content-between px-3 shadow-sm">
+    <div class="d-flex align-items-center gap-3">
+      <button id="btnToggle" class="btn btn-ghost text-gold d-lg-none"><i class="fa-solid fa-bars fa-lg"></i></button>
+      <div class="brand d-flex align-items-center gap-3">
+        <img src="../assets/logo.jpg" alt="logo" class="logo">
+        <div class="brand-text">
+          <div class="brand-name">1028 Tea & Café</div>
+          <small class="brand-sub">Expense & Profit Management</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+    </div>
+  </header>
+
+  <div class="app-shell d-flex">
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar bg-dark-brown shadow">
+      <div class="sidebar-inner">
+        <div class="sidebar-top px-3 py-3 border-bottom">
+          <div class="sidebar-title text-white fw-semibold">MENU</div>
+        </div>
+
+        <ul class="nav flex-column mt-3 px-2">
+          <li class="nav-item mb-1">
+            <a href="dashboard.html" class="nav-link d-flex align-items-center gap-3 active">
+              <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="./profit.php" class="nav-link d-flex align-items-center gap-3">
+              <i class="fa-solid fa-coins"></i><span>Profit</span>
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="./expense.php" class="nav-link d-flex align-items-center gap-3">
+              <i class="fa-solid fa-money-bill-transfer"></i><span>Expenses</span>
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="./products.php" class="nav-link d-flex align-items-center gap-3">
+              <i class="fa-solid fa-box-open"></i><span>Products</span>
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="./files.php" class="nav-link d-flex align-items-center gap-3">
+              <i class="fa-solid fa-folder"></i><span>Files</span>
+            </a>
+          </li>
+          <li class="nav-item mb-1">
+            <a href="./reports.php" class="nav-link d-flex align-items-center gap-3">
+              <i class="fa-solid fa-chart-line"></i><span>Reports</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer mt-auto">
+          <a href="./../logout.php" class="nav-link d-flex align-items-center gap-3">
+            <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="content p-4">
+
+      <!-- Stats Row -->
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <div class="card-hero p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h5 class="text-white mb-1">Dashboard Overview</h5>
+                <p class="text-muted mb-0">Here's a summary of your cafe performance.</p>
+              </div>
+              <div class="text-end">
+                <small class="text-muted">Updated: <span id="updatedAt">—</span></small>
+              </div>
+            </div>
+
+            <div class="row gx-3 gy-3">
+              <div class="col-6 col-lg-3">
+                <div class="stat-card p-3">
+                  <div class="stat-label">Today's Sales</div>
+                  <div class="stat-value" id="todaySales">₱ 0</div>
+                  <div class="stat-meta text-muted" id="todaySalesMeta"><i class="fa-solid fa-minus"></i> 0.0%</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-lg-3">
+                <div class="stat-card p-3">
+                  <div class="stat-label">This Month Profit</div>
+                  <div class="stat-value" id="monthProfit">₱ 0</div>
+                  <div class="stat-meta text-muted" id="monthProfitMeta"><i class="fa-solid fa-minus"></i> 0.0%</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-lg-3">
+                <div class="stat-card p-3">
+                  <div class="stat-label">This Month Expense</div>
+                  <div class="stat-value" id="monthExpense">₱ 0</div>
+                  <div class="stat-meta text-muted" id="monthExpenseMeta"><i class="fa-solid fa-minus"></i> 0.0%</div>
+                </div>
+              </div>
+
+              <div class="col-6 col-lg-3">
+                <div class="stat-card p-3">
+                  <div class="stat-label">Products</div>
+                  <div class="stat-value" id="productCount">0</div>
+                  <div class="stat-meta text-muted">active</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="row gx-3 gy-3">
+        <div class="col-12 col-lg-6">
+          <div class="panel p-4">
+            <div class="panel-head d-flex justify-content-between align-items-center mb-3">
+              <strong>Monthly Profit</strong>
+              <select id="profitYearSelect" class="form-select form-select-sm" style="width: auto;">
+                <!-- Years will be populated by JavaScript -->
+              </select>
+            </div>
+            <div style="height: 450px; position: relative;">
+              <canvas id="profitChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+          <div class="panel p-4">
+            <div class="panel-head d-flex justify-content-between align-items-center mb-3">
+              <strong>Monthly Expense</strong>
+              <select id="expenseYearSelect" class="form-select form-select-sm" style="width: auto;">
+                <!-- Years will be populated by JavaScript -->
+              </select>
+            </div>
+            <div style="height: 450px; position: relative;">
+              <canvas id="expenseChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="mt-4 text-center small" style="color: #fff;">
+        © 1028 Tea & Café — Expense & Profit Management
+      </footer>
+    </main>
+
+  </div>
+
+  <!-- Bootstrap bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Page JS -->
+  <script>
+    // Sidebar toggle (for small screens)
+    const btnToggle = document.getElementById('btnToggle');
+    const sidebar = document.getElementById('sidebar');
+    btnToggle?.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+
+    // Profile dropdown
+    const profileToggle = document.getElementById('profileToggle');
+    const profileMenu = document.getElementById('profileMenu');
+    profileToggle?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileMenu.classList.toggle('show');
+    });
+    document.addEventListener('click', () => profileMenu.classList.remove('show'));
+
+    // Initialize charts
+    const profitCtx = document.getElementById('profitChart');
+    const expenseCtx = document.getElementById('expenseChart');
+    const profitYearSelect = document.getElementById('profitYearSelect');
+    const expenseYearSelect = document.getElementById('expenseYearSelect');
+    let profitChart, expenseChart;
+
+    // Populate year dropdowns (2023 to current year)
+    const currentYear = new Date().getFullYear();
+    for (let year = 2023; year <= currentYear; year++) {
+      const option1 = document.createElement('option');
+      option1.value = year;
+      option1.textContent = year;
+      if (year === currentYear) option1.selected = true;
+      profitYearSelect.appendChild(option1);
+
+      const option2 = document.createElement('option');
+      option2.value = year;
+      option2.textContent = year;
+      if (year === currentYear) option2.selected = true;
+      expenseYearSelect.appendChild(option2);
+    }
+
+    // Fetch and display chart data
+    async function loadChartData(profitYear = currentYear, expenseYear = currentYear) {
+      try {
+        const response = await fetch(`../fetch_chart_data.php?profitYear=${profitYear}&expenseYear=${expenseYear}`);
+        const data = await response.json();
+
+        // Create profit chart
+        profitChart = new Chart(profitCtx, {
+          type: 'line',
+          data: {
+            labels: data.labels,
+            datasets: [
+              { 
+                label: 'Profit', 
+                data: data.profits, 
+                borderColor: '#ffd700', 
+                backgroundColor: 'rgba(255,215,0,0.15)', 
+                tension: 0.4, 
+                borderWidth: 3,
+                fill: true,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#ffd700',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+              }
+            ]
+          },
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { 
+              legend: { 
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return 'Profit: ₱' + context.parsed.y.toLocaleString();
+                  }
+                }
+              }
+            }, 
+            scales: { 
+              x: { 
+                ticks: { color: '#6b6b6b' },
+                grid: { display: false }
+              }, 
+              y: { 
+                ticks: { 
+                  color: '#6b6b6b',
+                  callback: function(value) {
+                    return '₱' + value.toLocaleString();
+                  }
+                },
+                grid: { color: 'rgba(0,0,0,0.05)' }
+              } 
+            }
+          }
+        });
+
+        // Create expense chart
+        expenseChart = new Chart(expenseCtx, {
+          type: 'line',
+          data: {
+            labels: data.labels,
+            datasets: [
+              { 
+                label: 'Expense', 
+                data: data.expenses, 
+                borderColor: '#dc3545', 
+                backgroundColor: 'rgba(220,53,69,0.15)', 
+                tension: 0.4, 
+                borderWidth: 3,
+                fill: true,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#dc3545',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+              }
+            ]
+          },
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false,
+            plugins: { 
+              legend: { 
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return 'Expense: ₱' + context.parsed.y.toLocaleString();
+                  }
+                }
+              }
+            }, 
+            scales: { 
+              x: { 
+                ticks: { color: '#6b6b6b' },
+                grid: { display: false }
+              }, 
+              y: { 
+                ticks: { 
+                  color: '#6b6b6b',
+                  callback: function(value) {
+                    return '₱' + value.toLocaleString();
+                  }
+                },
+                grid: { color: 'rgba(0,0,0,0.05)' }
+              } 
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error('Error loading chart data:', error);
+      }
+    }
+
+    // Fetch and display dashboard stats
+    async function loadDashboardStats() {
+      try {
+        const response = await fetch('../fetch_dashboard_stats.php');
+        const data = await response.json();
+
+        // Update stats
+        document.getElementById('todaySales').textContent = '₱ ' + data.todaySales.toLocaleString();
+        document.getElementById('monthProfit').textContent = '₱ ' + data.monthProfit.toLocaleString();
+        document.getElementById('monthExpense').textContent = '₱ ' + data.monthExpense.toLocaleString();
+        document.getElementById('productCount').textContent = data.productCount;
+
+        // Update percentage changes
+        updateStatMeta('todaySalesMeta', data.todaySalesChange);
+        updateStatMeta('monthProfitMeta', data.monthProfitChange);
+        updateStatMeta('monthExpenseMeta', data.monthExpenseChange);
+
+        document.getElementById('updatedAt').textContent = new Date().toLocaleString();
+
+      } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+      }
+    }
+
+    // Helper function to update stat meta with percentage
+    function updateStatMeta(elementId, changePercent) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+
+      const absChange = Math.abs(changePercent);
+      const isPositive = changePercent >= 0;
+      
+      // For expenses, red is good (decrease), green is bad (increase)
+      const isExpense = elementId === 'monthExpenseMeta';
+      const colorClass = isExpense 
+        ? (isPositive ? 'text-danger' : 'text-success')
+        : (isPositive ? 'text-success' : 'text-danger');
+      
+      const arrow = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
+      
+      element.className = `stat-meta ${colorClass}`;
+      element.innerHTML = `<i class="fa-solid ${arrow}"></i> ${absChange.toFixed(1)}%`;
+    }
+
+    // Year selector event listeners
+    profitYearSelect.addEventListener('change', () => {
+      const profitYear = profitYearSelect.value;
+      const expenseYear = expenseYearSelect.value;
+      
+      // Destroy existing charts
+      if (profitChart) profitChart.destroy();
+      if (expenseChart) expenseChart.destroy();
+      
+      // Reload with new years
+      loadChartData(profitYear, expenseYear);
+    });
+
+    expenseYearSelect.addEventListener('change', () => {
+      const profitYear = profitYearSelect.value;
+      const expenseYear = expenseYearSelect.value;
+      
+      // Destroy existing charts
+      if (profitChart) profitChart.destroy();
+      if (expenseChart) expenseChart.destroy();
+      
+      // Reload with new years
+      loadChartData(profitYear, expenseYear);
+    });
+
+    // Load data on page load
+    loadChartData();
+    loadDashboardStats();
+  </script>
+</body>
+</html>
