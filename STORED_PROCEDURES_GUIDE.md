@@ -1,12 +1,3 @@
-# Stored Procedures Guide - 1028 Café Management System
-
-## Installation
-
-1. Open phpMyAdmin
-2. Select your database: `expense_profit_monitoring`
-3. Click on "SQL" tab
-4. Copy and paste the contents of `database/create_stored_procedures.sql`
-5. Click "Go" to execute
 
 ## Available Stored Procedures
 
@@ -95,17 +86,7 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 ```
 
-## Benefits for Your Project
-
-1. **Demonstrates SQL Knowledge**: Shows your professor you understand advanced database concepts
-2. **Encapsulation**: Business logic is stored in the database
-3. **Reusability**: Same procedures can be called from different parts of your application
-4. **Performance**: Procedures are pre-compiled and optimized
-5. **Security**: Additional layer of security by limiting direct table access
-
 ## Testing Your Procedures
-
-Run this in phpMyAdmin SQL tab to test:
 
 ```sql
 -- Test adding a profit
@@ -117,7 +98,3 @@ CALL sp_get_profits_by_date(CURDATE());
 -- Test monthly summary
 CALL sp_get_monthly_summary(YEAR(CURDATE()), MONTH(CURDATE()));
 ```
-
-## Note
-
-Your current application will continue to work as-is. These stored procedures are additional functionality that you can demonstrate to your professor. You can optionally update your PHP code to use these procedures instead of direct queries.
